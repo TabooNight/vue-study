@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>绑定内联样式</title>
+  </head>
+  <body>
+    <div id="app1">
+      <div :style="{'color': color, 'fontSize': fontSize + 'px'}">文本</div>
+    </div>
+    <div id="app2">
+      <div :style="styles">文本</div>
+      <div :style="styles2">文本</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      // 使用v-bind:style(:style)可以给元素绑定内联样式，方法与:class类似，也有对象语法和数组语法
+      var app1 = new Vue({
+        el: "#app1",
+        data: {
+          color: "red",
+          fontSize: 14 // CSS属性名称使用驼峰命名或短横分隔命名
+        }
+      });
+
+      // 直接写一长串的样式不便于阅读和维护，所以一般写在data和computed里
+      var app2 = new Vue({
+        el: "#app2",
+        data: {
+          styles: {
+            color: "red",
+            fontSize: 14 + "px"
+          }
+        },
+        computed: {
+          styles2: function() {
+            return {
+              color: "red",
+              fontSize: 14 + "px"
+            }
+          }
+        }
+      });
+      // 应用多个样式对象时，可以使用数组语法
+
+      // 在实际业务中，:style的数组语法并不常用，因为往往可以写在一个对象里。而较为常用的应当是计算属性
+      // 使用:style时，Vue.js会自动给特殊的CSS属性名称增加前缀，比如transform
+    </script>
+  </body>
+</html>
