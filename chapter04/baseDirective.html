@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>基本指令</title>
+
+    <style media="screen">
+      [v-cloak]{
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app1" v-cloak>{{message}}</div>
+    <div id="app2">
+      <span v-once>{{message}}</span>
+      <div><span>{{message}}</span></div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      /* v-cloak：不需要表达式
+       *   它会在Vue实例结束编译时从绑定的HTML元素上移除，经常和CSS的display:none配合使用
+       *   Vue.js文件还没有加载完是，页面上回显示{{message}}，直到Vue创建实例、编译模板时，DOM才会被替换
+       *     ，所以整个过程屏幕是有闪动的，v-cloak是一个解决初始化慢导致页面闪动的最佳实践
+       *   但是在具有工程化的项目里，比如webpack和vue-router时，项目的HTML只有一个空的div元素，
+       *     所以不再需要v-cloak
+       */
+      var app1 = new Vue({
+        el: "#app1",
+        data: {
+          message: "这是一段文本"
+        }
+      });
+
+      /* v-once：定义它的元素或组件只渲染一次，包括元素或组件的所有子节点。
+       * 首次渲染后，不再随数据的变化重新渲染，将被视为静态内容
+       * v-once在业务中也很少用到，当需要进一步优化性能时，可能会用到
+       */
+      var app2 = new Vue({
+        el: "#app2",
+        data: {
+          message: "这是一段文本"
+        }
+      });
+
+      app2.message = "这是新的一段文本"
+    </script>
+  </body>
+</html>
