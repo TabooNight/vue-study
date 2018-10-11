@@ -62,3 +62,8 @@
 
     * v-cloak: 配合CSS [v-cloak]{display: none;}解决初始化慢导致页面闪动的最佳实践
     * v-once: 定义它的元素和组件只渲染一次
+
+  * conditionDirective.html
+
+    * v-if、v-else-if、v-else
+    * v-show、v-if与v-show的区别以及各自的适用场景

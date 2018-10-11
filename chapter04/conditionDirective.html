@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>条件渲染指令</title>
+  </head>
+  <body>
+    <div id="app1">
+      <p v-if="status === 1">当status为1时显示该行</p>
+      <p v-else-if="status === 2">当status为2时显示该行</p>
+      <p v-else>否则显示该行</p>
+    </div>
+
+    <div id="app2">
+      <!-- 在Vue.js内置的<template>元素上使用条件指令，最终渲染的结果不会包含该元素 -->
+      <template v-if="status === 1">
+        <p>这是一段文本</p>
+        <p>这是一段文本</p>
+        <p>这是一段文本</p>
+      </template>
+    </div>
+
+    <div id="app3">
+      <template v-if="type === 'name'">
+        <label>用户名：</label>
+        <input placeholder="输入用户名">
+      </template>
+      <template v-else>
+        <lable>邮箱：</lable>
+        <input placeholder="输入邮箱">
+      </template>
+      <button @click="handleToggleClick">切换输入类型</button>
+    </div>
+
+    <div id="app4">
+      <template v-if="type === 'name'">
+        <label>用户名：</label>
+        <input placeholder="输入用户名" key="name-input">
+      </template>
+      <template v-else>
+        <lable>邮箱：</lable>
+        <input placeholder="输入邮箱" key="mail-input">
+      </template>
+      <button @click="handleToggleClick">切换输入类型</button>
+    </div>
+
+    <div id="app5">
+      <!--
+        v-show和v-if用法基本一致。不过v-show是改变元素的CSS属性display，v-if为false时不会渲染元素
+        v-show不能在<template>上使用
+        v-if更适合不经常改变的场景，因为切换开销相对较大
+        v-show适用于频繁切换条件
+      -->
+      <p v-show="status === 1">当status为1时显示该行</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      var app1 = new Vue({
+        el: "#app1",
+        data: {
+          status: 1
+        }
+      });
+
+      var app2 = new Vue({
+        el: "#app2",
+        data: {
+          status: 1
+        }
+      });
+
+      // Vue在渲染元素时，出于效率考虑，会尽可能地复用已有的元素而非重新渲染
+      var app3 = new Vue({
+        el: "#app3",
+        data: {
+          type: "name"
+        },
+        methods: {
+          handleToggleClick: function() {
+            this.type = this.type === "name" ? "mail": "name";
+          }
+        }
+      });
+      // 在输入框中输入内容后，点击切换按钮，虽然DOM变了，但是之前在输入框输入的内容并没有改变，
+      //   只是替换了placeholder的内容，说明input元素被复用了
+
+      // 给元素添加key值后，就不会再复用了。切换类型时键入的内容也会被删除
+      var app4 = new Vue({
+        el: "#app4",
+        data: {
+          type: "name"
+        },
+        methods: {
+          handleToggleClick: function() {
+            this.type = this.type === "name" ? "mail": "name";
+          }
+        }
+      });
+      // 此时label元素依然是复用的，因为没有添加key属性
+
+      var app5 = new Vue({
+        el: "#app5",
+        data: {
+          status: 2
+        }
+      });
+    </script>
+  </body>
+</html>
