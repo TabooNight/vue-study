@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>计算属性缓存</title>
+  </head>
+  <body>
+    <div id="app1">
+      <!-- 注意，这里的reversedText是方法，所以要带() -->
+      {{reversedText()}}
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      var app1 = new Vue({
+        el: "#app1",
+        data: {
+          text: "123,456"
+        },
+        methods: {
+          reversedText: function() {
+            return this.text.split(",").reverse().join(",");
+          },
+        },
+      });
+      /* 问题：
+       *   本例中没有使用计算属性，在methods里面定义了一个方法实现了相同的效果，甚至该方法还可以接受参数
+       *   使用起来更灵活。既然使用methods就可以实现，那么为什么还需要计算属性呢？
+       * 原因：
+       *   计算属性是基于它的依赖缓存的。一个计算属性所依赖的数据发生变化时，它才会重新取值
+       *   所以text只要不改变，计算属性也就不更新，而methods只要重新渲染就会被调用
+       * 总结：
+       *   使用计算属性还是methods取决于你是否需要缓存，当遍历大数据和做大量计算时，应当使用计算属性
+       *   除非你不希望得到缓存
+       */
+    </script>
+  </body>
+</html>
