@@ -67,3 +67,9 @@
 
     * v-if、v-else-if、v-else
     * v-show、v-if与v-show的区别以及各自的适用场景
+
+  * listDirective.html
+
+    * v-for的基本用法
+    * 数组更新
+    * 过滤与排序
