@@ -6,7 +6,8 @@
 
 * chapter01
 
-  本章主要展示了Vue.js最核心最基本的功能
+  本章主要介绍了Vue.js最核心最基本的功能
+  
   * hello.html
     
     * Vue.js实现Hello World应用
@@ -25,3 +26,30 @@
     * v-bind指令 =>  动态更新HTML元素上的属性
     * v-on指令 => 绑定事件监听器
     * 语法糖
+ 
+* chapter02
+
+  本章主要介绍了Vue.js的计算属性
+  
+  * computedAttr.html
+  
+    * 计算属性的用法
+    
+  * computedCache.html
+  
+    * 计算属性的缓存
+    * 计算属性与methods的区别
+    
+* chapter03
+
+  本章主要介绍了v-bind及class与style
+  
+  * bindClassStyle.html
+    
+    * 使用对象语法绑定class
+    * 使用数组语法绑定class
+    * 在组件上绑定class
+    
+  * bindInlineStyle.html
+  
+    * 绑定内联样式
