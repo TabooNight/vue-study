@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>Vue实例与数据绑定</title>
+  </head>
+  <body>
+    <div>
+      <div id="app1"></div>
+      <div id="app2"></div>
+      <div id="app3">
+        {{book}}
+      </div>
+      <div id="app4">
+        {{date}}
+      </div>
+      <div id="app5">
+        <span v-html="link"></span>
+      </div>
+      <div>
+        <!-- 如果想显示{{}}标签，而不进行替换，使用v-pre可跳过这个元素和它的子元素的编译过程 -->
+        <span v-pre>{{这里的内容是不会被编译的}}</span>
+      </div>
+      <div id="app6">
+        {{number / 10}}
+        {{isOk ? "确定": "取消"}}
+        {{text.split(",").reverse().join(",")}}
+      </div>
+      <div id="app7">
+        {{date | formatDate}}
+      </div>
+    </div>
+  </body>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+  <script type="text/javascript">
+
+    // 1. 实例与数据
+    var myData = {
+      a: 1,
+    }
+
+    var app1 = new Vue({
+      el: "#app1",
+      data: myData,
+    });
+
+    console.log(app1.a); // 1
+    // 修改属性，原数据也会随之修改
+    app1.a = 2;
+    console.log(myData.a); // 2
+
+    // 反之，修改原数据，Vue属性也会修改
+    myData.a = 3;
+    console.log(app1.a); // 3
+
+    // 2. 生命周期
+    /**
+     * Vue的生命周期
+     *   created: 实例创建完成后调用，此阶段完成了数据的观测等，但尚未挂载，$sl还不可用。
+     *     需要初始化处理一些数据时会比较有用
+     *   mounted: el挂载到实例上后调用，一般我们的第一个业务逻辑会在这里开始。
+     *   beforeDestroy: 实例销毁之前调用。主要解绑一些使用addEventListener监听的事件等
+     */
+    var app2 = new Vue({
+      el: "#app2",
+      data: {
+       a: 2
+      },
+      created: function() {
+       console.log(this.a); // 2
+      },
+      mounted: function() {
+       console.log(this.$el); // <div id="app2"></div>
+      }
+    });
+
+    // 3. 插值与表达式
+    // {{}}是最基本的文本插值方法，它会自动将我们双向绑定是护具实时显示出来
+    var app3 = new Vue({
+      el: "#app3",
+      data: {
+        book: "《Vue.js实战》"
+      }
+    });
+
+    // 任何方法修改数据，{{}}的内容都会被实时替换
+    var app4 = new Vue({
+      el: "#app4",
+      data: {
+        date: new Date()
+      },
+      mounted: function() {
+        var _this = this; // 声明一个变量指向Vue实例this,保证作用域一致
+        this.timer = setInterval(function() {
+          _this.date = new Date(); // 修改数据date
+        }, 1000);
+      },
+      beforeDestroy: function() {
+        if (this.timer) {
+          clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
+        }
+      }
+    });
+
+    // 可以使用v-html输出HTML，而不是将数据解释后的纯文本
+    var app5 = new Vue({
+      el: "#app5",
+      data: {
+        link: "<a href=\"https://www.baidu.com\">这是一个连接</a>"
+      }
+    });
+    // 注意：如果将用户产生的内容使用v-html输出后，有可能导致XSS工具，
+    //   所以要在服务端对用户提交的内容进行处理，一般可将尖括号"<>"进行转义
+
+    // 在{{}}中，除了简单的绑定属性值外，还可以使用JavaScript表达式进行简单的运算、三元运算等
+    var app6 = new Vue({
+      el: "#app6",
+      data: {
+        number: 100,
+        isOk: false,
+        text: "123,456"
+      }
+    });
+    // Vue.js只支持单个表达式，不支持语句和流控制。另外，在表达式中，不能使用用户自定义的全局变量，
+    //   只能使用Vue白名单内的全局变量
+
+    // 4. 过滤器
+    // 在月份、日期、小时等小于10时前面补0
+    var padDate = function(value) {
+      return value < 10 ? "0" + value: value;
+    };
+
+    var app7 = new Vue({
+      el: "#app7",
+      data: {
+        date: new Date()
+      },
+      filters: {
+        formatDate: function(value) { // 这里的value就是需要过滤的数据
+          var date = new Date(value);
+          var year = date.getFullYear();
+          var month = padDate(date.getMonth() + 1);
+          var day = padDate(date.getDate());
+          var hours = padDate(date.getHours());
+          var minutes = padDate(date.getMinutes());
+          var seconds = padDate(date.getSeconds());
+          // 将整理好的数据返回去
+          return year + "-" + month + "-" + day + " " + hours + ":" + minutes + ":" + seconds;
+        }
+      },
+      mounted: function() {
+        var _this = this; // 声明一个变量指向Vue实例this，保证作用域一直
+        this.timer = setInterval(function() {
+          _this.date = new Date(); // 修改数据date
+        }, 1000);
+      },
+      beforeDestroy: function() {
+        if (this.timer) {
+          clearInterval(this.timer); // 在Vue实例销毁前，清除我们的定时器
+        }
+      }
+    });
+
+  </script>
+</html>
