@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>指令与事件</title>
+  </head>
+  <body>
+    <div id="app1">
+      <p v-if="show">显示这段文本</p>
+    </div>
+    <div id="app2">
+      <a v-bind:href="url">链接</a>
+      <img v-bind:src="imgUrl"/>
+    </div>
+    <div id="app3">
+      <p v-if="show">这是一段文本</p>
+      <button v-on:click="handleClose">点击隐藏</button>
+    </div>
+
+    <div id="app4">
+      <p v-if="show">这是一段文本</p>
+      <button v-on:click="show = false">点击隐藏</button>
+    </div>
+
+    <div id="app5">
+      <p v-if="show">这是一段文本</p>
+      <button v-on:click="show = false">点击隐藏</button>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      // 指令是Vue.js模板中最常见的一项功能，它带有前缀v-
+
+      // v-if 条件判断，满足条件才执行子语句
+      var app1 = new Vue({
+        el: "#app1",
+        data: {
+          show: true
+        }
+      });
+
+      // v-bind 更新HTML元素上的属性，比如id、class等
+      var app2 = new Vue({
+        el: "#app2",
+        data: {
+          url: "https://www.github.com",
+          imgUrl: "https://cdn4.buysellads.net/uu/1/3386/1525189887-61450.png"
+        }
+      });
+
+      // v-on 绑定事件监听器
+      var app3 = new Vue({
+        el: "#app3",
+        data: {
+          show: true
+        },
+        methods: {
+          handleClose: function() {
+            this.show = false;
+          }
+        }
+      });
+      // v-on绑定事件的表达式除了方法名，也可以直接是一个内联语句
+      var app4 = new Vue({
+        el: "#app4",
+        data: {
+          show: true
+        }
+      });
+      // 如果绑定的事件要处理复杂的业务逻辑，建议还是写在methods里声明一个方法，这样可读性更强也好维护
+      // Vue.js将methods里的方法也代理了，所以也可以像访问Vue数据那样来调用方法
+      var app5 = new Vue({
+        el: "#app5",
+        data: {
+          show: true
+        },
+        methods: {
+          handleClose: function() {
+            this.close();
+          },
+          close: function() {
+            this.show = false;
+          }
+        }
+      });
+      // 在Vue实例外部调用
+      var app = new Vue({
+        el: "#app5",
+        data:{
+          show: true
+        },
+        methods: {
+          init: function (text) {
+            console.log(text);
+          }
+        },
+        mounted: function() {
+          this.init("在初始化时调用");
+        }
+      });
+
+      app.init("通过外部调用");
+
+      // 语法糖：在不影响功能的情况下，添加某种方法实现同样的效果，从而方便程序开发
+      // v-bind:* 可直接用 :* 代替 eg: v-bind:href <=> :href v-bind:src <=> :src
+      // v-on:* 可直接用 @* 代替 eg: v-on:click <=> @click
+
+    </script>
+  </body>
+</html>
