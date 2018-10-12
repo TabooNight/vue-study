@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>方法和事件</title>
+  </head>
+  <body>
+    <div id="app1">
+      点击次数：{{counter}}
+      <button @click="counter++">+1</button>
+    </div>
+
+    <div id="app2">
+      点击次数：{{counter}}
+      <button @click="handleAdd()">+1</button>
+      <button @click="handleAdd(10)">+10</button>
+    </div>
+
+    <div id="app3">
+      <!-- Vue提供一个特殊的变量$event，用于访问原生DOM事件 -->
+      <a href="http://www.apple.com" @click="handleClick('禁止打开', $event)">打开链接</a>
+    </div>
+
+    <!-- 修饰符
+      在上例使用的event.preventDefault()也可以用Vue事件的修饰符来实现，在@绑定的事件后加小圆点“.”，
+      再跟一个后缀来使用修饰符。Vue支持以下修饰符
+      * .stop
+      * .prevent
+      * .capture
+      * .self
+      * .once
+     -->
+    <div id="app4">
+      <!-- 阻止单击事件冒泡 -->
+      <a @click.stop="handleStop"></a>
+      <!-- 提交事件不再重载页面 -->
+      <form @submit.prevent="handlePrevent"></form>
+      <!-- 修饰符可以串联 -->
+      <a @click.stop.prevent="handle"></a>
+      <!-- 只有修饰符 -->
+      <form @submit.prevent></form>
+      <!-- 添加事件侦听器时使用事件捕获模式 -->
+      <div @click.capture="handle">...</div>
+      <!-- 只在事件在该元素本身(而不是子元素)触发时触发回调 -->
+      <div @click.self="handle">...</div>
+      <!-- 只触发一次，组件同样适用 -->
+      <div @click.once="handle">...</div>
+    </div>
+
+    <div id="app5">
+      <!-- 在表单元素上监听键盘事件时，还可以使用按键修饰符 -->
+      <!-- 只有在keyCode是13时调用vm.submit -->
+      <input @keyup.13="submit">
+
+      <!--
+        除了具体的某个keyCode外，Vue还提供了一些快捷名称
+        * .enter
+        * .tab
+        * .delete(捕获“删除”和“退格”键)
+        * .esc
+        * .space
+        * .up
+        * .down
+        * .left
+        * .right
+        这些按键修饰符也可以组合使用，或者和鼠标一起配合使用
+        * .ctrl
+        * .alt
+        * .shift
+        * .meta(Mac下是Command键，Windows下是窗口键)
+      -->
+
+      <!-- Shift + S -->
+      <input @keyup.shift.83="handleSave">
+      <!-- Ctrl + Click -->
+      <div @click.ctrl="doSomething">Do something</div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      new Vue({
+        el: "#app1",
+        data: {
+          counter: 0
+        }
+      });
+
+      new Vue({
+        el: "#app2",
+        data: {
+          counter: 0
+        },
+        methods: {
+          handleAdd: function(count) {
+            console.log(count);
+            count = count || 1;
+            // this指向当前Vue实例app
+            this.counter += count;
+          }
+        }
+      });
+
+      new Vue({
+        el: "#app3",
+        methods: {
+          handleClick: function (message, event) {
+            event.preventDefault();
+            window.alert(message);
+          }
+        }
+      });
+
+      // 自己配置具体按键
+      Vue.config.keyCodes.f1 = 112;
+      // 全局定义后，就可以使用@keyup.f1
+
+      new Vue({
+        el: "#app5",
+        methods: {
+          handleSave: function () {
+            alert("保存");
+          },
+          doSomething: function () {
+            alert("Do something");
+          }
+        }
+      });
+    </script>
+  </body>
+</html>
