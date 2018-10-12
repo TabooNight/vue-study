@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>修饰符</title>
+  </head>
+  <body>
+    <!-- .lazy: v-model默认是在input事件同步输入框的数据，.lazy会转变为change事件中同步 -->
+    <div id="app1">
+      <input type="text" v-model.lazy="message">
+      <p>{{message}}</p>
+    </div>
+
+    <!-- .number: 将输入转换为Number类型。否则输入的是数字，但是其类型是String -->
+    <div id="app2">
+      <input type="number" v-model.number="message">
+      <p>{{typeof message}}</p>
+    </div>
+
+    <!-- .trim: 自动过滤输入的首位空格 -->
+    <div id="app3">
+      <input type="text" v-model.trim="message">
+      <p>"{{message}}"</p>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      new Vue({
+        el: "#app1",
+        data: {
+          message: ""
+        }
+      });
+
+      new Vue({
+        el: "#app2",
+        data: {
+          message: ""
+        }
+      });
+
+      new Vue({
+        el: "#app3",
+        data: {
+          message: ""
+        }
+      })
+    </script>
+  </body>
+</html>
