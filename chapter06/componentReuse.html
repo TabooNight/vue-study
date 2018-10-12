@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>组件与复用</title>
+  </head>
+  <body>
+    <div id="app1">
+      <my-component></my-component>
+    </div>
+
+    <div id="app2">
+      <my-component></my-component>
+    </div>
+
+    <!-- Vue组件的模板在某些情况下会受到HTML的限制，比如<table>内规定只允许是<tr>、<th>、<td>
+          等表格元素，所以在<table>内直接使用组件是无效的。此时可使用特殊的is属性来挂载组件
+    -->
+    <div id="app3">
+      <table>
+        <tbody is="my-component"></tbody>
+      </table>
+    </div>
+    <!-- tbody在渲染时，会被替换为组件的内容。常见的限制元素还有<ul>、<ol>、<select> -->
+    <!-- 如果使用的是字符串模板，是不受限制的。比如.vue单文件用法等 -->
+
+    <div id="app4">
+      <my-component></my-component>
+    </div>
+
+    <div id="app5">
+      <my-component></my-component>
+      <my-component></my-component>
+      <my-component></my-component>
+    </div>
+
+    <div id="app6">
+      <my-component></my-component>
+      <my-component></my-component>
+      <my-component></my-component>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      // 全局注册组件
+      Vue.component("my-component", {
+        template: "<div>这里是组件的内容</div>" // template的DOM结构必须被一个元素包含
+      });
+      var app1 = new Vue({
+        el: "#app1"
+      });
+
+      // 局部注册组件
+      var Child = {
+        template: "<div>局部注册组件的内容</div>"
+      }
+      var app2 = new Vue({
+        el: "#app2",
+        components: {
+          "my-component": Child
+        }
+      });
+
+      var app3 = new Vue({
+        el: "#app3"
+      });
+
+      // 除了template选项外，组件中还可以像Vue实例那样使用其他的选项，比如data、computed、methods等。
+      // 但在使用data时，和实例稍有区别，data必须是函数，然后将数据return出去
+      Vue.component("my-component", {
+        template: "<div>{{message}}</div>",
+        data: function () {
+          return {
+            message: "组件内容"
+          }
+        }
+      });
+      var app4 = new Vue({
+        el: "#app4"
+      });
+
+      // JavaScript对象时引用关系，所以如果return出的对象引用了外部的一个对象，那这个对象就是共享的，
+      // 任何一方修改都同步
+      var data = {
+        counter: 0
+      }
+      Vue.component("my-component", {
+        template: "<button @click='counter++'>{{counter}}</button>",
+        data: function () {
+          return data;
+        }
+      });
+      var app5 = new Vue({
+        el: "#app5"
+      });
+
+      // 互不影响，完全达到复用
+      Vue.component("my-component", {
+        template: "<button @click='counter++'>{{counter}}</button>",
+        data: function () {
+          return {
+            counter: 0
+          }
+        }
+      });
+      var app6 = new Vue({
+        el: "#app6"
+      });
+    </script>
+  </body>
+</html>

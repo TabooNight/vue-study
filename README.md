@@ -105,3 +105,12 @@
     * .lazy修饰符
     * .number修饰符
     * .trim修饰符
+
+* chapter06
+
+  本章主要介绍Vue.js最核心、这个框架设计最精彩的地方“组件(Component)”
+
+  * componentReuse.html
+
+    * 组件的用法
+    * 组件的复用
