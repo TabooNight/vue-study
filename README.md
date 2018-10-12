@@ -82,3 +82,14 @@
   * shoppingCart
 
     * 根据所需知识实现简易购物车功能
+
+* chapter05
+
+  本章主要介绍了表单与v-model的使用
+
+  * baseForm.html
+
+    * v-model对数据的双向绑定
+    * 单选按钮
+    * 复选框
+    * 选择列表
