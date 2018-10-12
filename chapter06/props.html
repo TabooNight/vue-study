@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>使用props传递数据</title>
+  </head>
+  <body>
+    <div id="app1">
+      <my-component message="来自父组件的数据"></my-component>
+    </div>
+
+    <div id="app2">
+      <my-component warning-text="提示信息"></my-component>
+    </div>
+
+    <div id="app3">
+      <input type="text" v-model="parentMessage">
+      <my-component :message="parentMessage"></my-component>
+    </div>
+
+    <div id="app4">
+      <my-component message="[1,2,3]"></my-component>
+      <my-component :message="[1,2,3]"></my-component>
+    </div>
+
+    <div id="app5">
+      <my-component :init-count="1"></my-component>
+    </div>
+
+    <div id="app6">
+      <my-component :width="100"></my-component>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      // 在组件中使用选项props来声明需要从父级接受的数据，props的值可以是两种:字符串数组和对象
+      Vue.component("my-component", {
+        props: ["message"],
+        template: "<div>{{message}}</div>"
+      });
+      var app = new Vue({
+        el: "#app1"
+      });
+
+      // 由于HTML特性不区分大小写，当使用DOM模板时，
+      // 驼峰命名(camelCase)的props名称要转成短横分隔命名(kebab-case)
+      Vue.component("my-component", {
+        props: ["warningText"],
+        template: "<div>{{warningText}}</div>"
+      });
+      var app2 = new Vue({
+        el: "#app2"
+      });
+      // 当使用的是字符串模板，仍然可以忽略这些限制
+
+      // 使用指令v-bind动态绑定props值，当父组件的数据变化时，也会传递给子组件
+      Vue.component("my-component", {
+        props: ["message"],
+        template: "<div>{{message}}</div>"
+      });
+      var app3 = new Vue({
+        el: "#app3",
+        data: {
+          parentMessage: ""
+        }
+      });
+
+      // 如果直接传递数字、布尔值、数组、对象，而且不用v-bind，传递的仅仅是字符串
+      Vue.component("my-component", {
+        props: ["message"],
+        template: "<div>{{message.length}}</div>"
+      });
+      var app4 = new Vue({
+        el: "#app4"
+      });
+
+      // 为了尽可能将父子组件解耦，避免子组件无意中修改父组件的状态,Vue2.x通过props传递数据是单向的。
+      // 也就是说父组件数据变化会传递给子组件，反过来则不行
+      // 业务中经常遇到两种需要改变props的情况，一种是父组件传递初始值进来，子组件将它作为初始值保存起来，
+      // 在自己的作用于下可以随意使用和修改，如下：
+      Vue.component("my-component", {
+        props: ["initCount"],
+        template: "<div>{{count}}</div>",
+        data: function () {
+          return {
+            count: this.initCount
+          }
+        }
+      });
+      var app5 = new Vue({
+        el: "#app5"
+      });
+
+      // 另一种情况就是prop作为需要被转变的原始值传入，这种情况用计算属性即可
+      Vue.component("my-component", {
+        props: ["width"],
+        template: "<div :style='style'>组件内容</div>",
+        computed: {
+          style: function () {
+            return {
+              width: this.width + "px"
+            }
+          }
+        }
+      });
+      var app6 = new Vue({
+        el: "#app6"
+      });
+      // 注意:在JavaScript中对象和数组时引用类型，指向同一个内存空间，所以props是对象和数组时，
+      // 在子组件内改变是会影响父组件的
+
+      // 当prop需要验证时，需要使用对象写法。当数据校验失败时，会在控制台里弹出警告
+      Vue.component("my-component", {
+        props: {
+          propA: Number, // 必须是数字类型
+          propB: [String, Number], // 必须是字符串或数字类型
+          propC: { // 布尔值，如果没有定义，默认值是true
+            type: Boolean,
+            default: true
+          },
+          propD: { // 数字，而且必传
+            type: Number,
+            required: true
+          },
+          propE: { // 如果是数组或对象，默认值必须是一个函数来返回
+            type: Array,
+            default: function () {
+              return [];
+            }
+          },
+          propF: { // 自定义一个验证函数
+            validator: function (value) {
+              return value > 10;
+            }
+          }
+        }
+      });
+      // 验证的type类型可以是：String、Number、Object、Boolean、Array、Function
+      // type可以是一个自定义构造器，使用instanceof检测
+      // 当prop验证失败时，在开发版本下会在控制台抛出一条警告
+    </script>
+  </body>
+</html>
