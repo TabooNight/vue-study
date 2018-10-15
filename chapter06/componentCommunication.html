@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <title>组件通信</title>
+  </head>
+  <body>
+    <!-- 自定义事件 -->
+    <div id="app1">
+      <p>总数：{{total}}</p>
+      <my-component @increase="handleGetTotal" @reduce="handleGetTotal"></my-component>
+    </div>
+
+    <!-- 使用v-model -->
+    <div id="app2">
+      <p>总数：{{total}}</p>
+      <my-component v-model="total"></my-component>
+    </div>
+
+    <!-- 使用v-model创建自定义的表单输入组件，进行数据双向绑定 -->
+    <div id="app3">
+      <p>总数：{{total}}</p>
+      <my-component v-model="total"></my-component>
+      <button @click="handleReduce">-1</button>
+    </div>
+
+    <!-- 非父子组件通信 -->
+    <div id="app4">
+      {{message}}
+      <component-a></component-a>
+    </div>
+
+    <!-- 父链：在子组件中，使用this.$parent访问父实例或组件；在父组件中，使用this.$children访问所有子组件 -->
+    <div id="app5">
+      {{message}}
+      <component-a></component-a>
+    </div>
+
+    <!-- 当子组件较多时，通过this.$children来一一遍历出我们需要的一个组件实例是比较困难的，
+          尤其是组件动态渲染时，它们的序列是不固定的。
+         Vue提供了子组件索引的方法，用特殊的属性ref来为子组件指定一个索引名称
+    -->
+    <div id="app6">
+      <button @click="handleRef">通过ref获取子组件实例</button>
+      <component-a ref="comA"></component-a>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.16/vue.min.js"></script>
+    <script type="text/javascript">
+      Vue.component("my-component", {
+        template: "\
+        <div>\
+          <button @click='handleIncrease'>+1</button>\
+          <button @click='handleReduce'>-1</button>\
+        </div>",
+        data: function () {
+          return {
+            counter: 0
+          }
+        },
+        methods: {
+          handleIncrease: function () {
+            this.counter++;
+            this.$emit("increase", this.counter); // $emit()第一个参数是父组件自定义事件的名称，后面为参数
+          },
+          handleReduce: function () {
+            this.counter--;
+            this.$emit("increase", this.counter);
+          }
+        }
+      });
+
+      new Vue({
+        el: "#app1",
+        data: {
+          total: 0
+        },
+        methods: {
+          handleGetTotal: function (total) {
+            this.total = total;
+          }
+        }
+      });
+
+      Vue.component("my-component", {
+        template: "<button @click='handleClick'>+1</button>",
+        data: function () {
+          return {
+            counter: 0
+          }
+        },
+        methods: {
+          handleClick: function () {
+            this.counter++;
+            this.$emit("input", this.counter);
+          }
+        }
+      });
+      new Vue({
+        el: "#app2",
+        data: {
+          total: 0
+        }
+      });
+
+      Vue.component("my-component", {
+        props: ["value"],
+        template: '<input :value="value" @input="updateValue" />',
+        methods: {
+          updateValue: function (event) {
+            this.$emit("input", event.target.value);
+          }
+        }
+      });
+      new Vue({
+        el: "#app3",
+        data: {
+          total: 0
+        },
+        methods: {
+          handleReduce: function () {
+            this.total--;
+          }
+        }
+      });
+
+      var bus = new Vue();
+      Vue.component("component-a", {
+        template: '<button @click="handleEvent">传递事件</button>',
+        methods: {
+          handleEvent: function () {
+            bus.$emit("on-message", "来自组件component-a的内容");
+          }
+        }
+      });
+      new Vue({
+        el: "#app4",
+        data: {
+          message: ""
+        },
+        mounted: function () {
+          var _this = this;
+          // 在实例初始化时监听来自bus实例的事件
+          bus.$on("on-message", function (msg) {
+            _this.message = msg;
+          });
+        }
+      });
+
+      Vue.component("component-a", {
+        template: '<button @click="handleEvent">通过父链直接修改数据</button>',
+        methods: {
+          handleEvent: function () {
+            this.$parent.message = "来自组件component-a的内容";
+          }
+        }
+      });
+      new Vue({
+        el: "#app5",
+        data: {
+          message: ""
+        }
+      });
+      // 尽管Vue允许这样的操作，但在业务中，应尽量避免依赖子组件依赖父组件的数据，更不应该主动修改它的数据
+      // 因为这样使得父子组件紧耦合，只看父组件，很难理解父组件的状态变化，因为它可能被任意组件修改。
+      // 理想情况下，只有组件自己能修改它的状态。父子组件最好还是通过props和$emit通信
+
+      Vue.component("component-a", {
+        template: "<div>子组件</div>",
+        data: function () {
+          return {
+            message: "子组件内容"
+          }
+        }
+      });
+      new Vue({
+        el: "#app6",
+        methods: {
+          handleRef: function () {
+            // 通过$refs来访问指定的实例
+            var msg = this.$refs.comA.message; // $refs只在组件渲染完成后才填充，并且它是非响应式的。
+            // 应当避免在模板或计算属性中使用$refs
+            console.log(msg);
+          }
+        }
+      });
+    </script>
+  </body>
+</html>

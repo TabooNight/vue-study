@@ -120,3 +120,9 @@
     * 使用props传递数据的基本用法
     * 单向数据流
     * 数据验证
+
+  * componentCommunication.html
+
+    * 自定义事件进行组件通信
+    * 使用v-model进行组件通信
+    * 非父子组件通信
