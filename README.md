@@ -134,3 +134,10 @@
     * 具名slot用法
     * 作用域插槽
     * 访问slot
+
+  * advancedComponent.html
+
+    * 递归组件
+    * 内联组件
+    * 动态组件
+    * 异步组件
