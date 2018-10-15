@@ -147,3 +147,11 @@
     * $nextTick:DOM更新完成回调方法
     * X-Templates
     * 手动挂载实例
+
+  * numberInput
+
+    * 数字输入框组件
+
+  * tab
+
+    * 标签页组件
