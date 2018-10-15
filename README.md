@@ -141,3 +141,9 @@
     * 内联组件
     * 动态组件
     * 异步组件
+
+  * others.html
+
+    * $nextTick:DOM更新完成回调方法
+    * X-Templates
+    * 手动挂载实例
